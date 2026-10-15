@@ -221,6 +221,7 @@ const HeroArtwork = () => {
 
           bottom: {
             xs: '6%',
+            sm: '12%',
             md: '10%',
             lg: '16%',
             xl: '24%',
@@ -228,6 +229,7 @@ const HeroArtwork = () => {
 
           width: {
             xs: '215px',
+            sm: '336px',
             md: '353px',
             lg: '440px',
           },
