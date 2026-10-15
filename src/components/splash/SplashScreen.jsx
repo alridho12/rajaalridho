@@ -6,27 +6,105 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Lottie } from 'lottie-react';
+import { keyframes } from '@emotion/react';
+
+import {Lottie} from 'lottie-react';
 
 import ShootingStars from './ShootingStars';
 
 import ufoAnimation from '../../assets/lottie/ufo.json';
-
 import moon from '../../assets/images/moon-splash.png';
 
 const LOADING_DURATION = 3200;
+
+// ==========================================
+// CINEMATIC ANIMATIONS
+// ==========================================
+
+const moonReveal = keyframes`
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    filter: grayscale(1) brightness(0.2) blur(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: grayscale(1) brightness(0.7) contrast(1.3);
+  }
+`;
+
+const textReveal = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+    filter: blur(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+`;
+
+const orbitReveal = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`;
+
+const orbitGlow = keyframes`
+  0%, 100% {
+    opacity: 0.65;
+  }
+
+  50% {
+    opacity: 1;
+  }
+`;
+
+const ufoFloat = keyframes`
+  0%, 100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+`;
+
+const flarePulse = keyframes`
+  0%, 100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+`;
+
+// ==========================================
+// SPLASH SCREEN
+// ==========================================
 
 const SplashScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
 
-  // ==========================================
-  // JAVASCRIPT LOADING
-  // ==========================================
+  // ========================================
+  // LOADING
+  // ========================================
 
   useEffect(() => {
-    const previousOverflow =
-      document.body.style.overflow;
+    const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = 'hidden';
 
@@ -36,10 +114,8 @@ const SplashScreen = ({ onComplete }) => {
     const startTime = performance.now();
 
     const updateLoading = (now) => {
-      const elapsed = now - startTime;
-
       const ratio = Math.min(
-        elapsed / LOADING_DURATION,
+        (now - startTime) / LOADING_DURATION,
         1
       );
 
@@ -59,39 +135,45 @@ const SplashScreen = ({ onComplete }) => {
     return () => {
       cancelAnimationFrame(frameId);
       clearTimeout(finishTimer);
-
       document.body.style.overflow = previousOverflow;
     };
   }, []);
 
-  // ==========================================
-  // EXIT SPLASH
-  // ==========================================
+  // ========================================
+  // EXIT ANIMATION
+  // ========================================
 
   useEffect(() => {
     if (!isLeaving) return;
 
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       onComplete?.();
     }, 650);
 
     return () => clearTimeout(timer);
   }, [isLeaving, onComplete]);
 
-  // ==========================================
-  // STYLES
-  // ==========================================
+  // ========================================
+  // SHARED ORBIT STYLE
+  // ========================================
 
-  const ringStyle = {
+  const orbitStyle = {
     position: 'absolute',
     left: '50%',
     top: '50%',
-    width: '95%',
-    height: '49%',
-    border: '2px solid rgba(255,255,255,0.7)',
+
+    width: '98%',
+    height: '52%',
+
+    border: '2px solid rgba(255,255,255,.85)',
     borderRadius: '50%',
-    transform: 'translate(-50%, -50%) rotate(-13deg)',
-    boxShadow: '0 0 12px rgba(255,255,255,0.17)',
+
+    transform:
+      'translate(-50%, -50%) rotate(-13deg)',
+
+    boxShadow:
+      '0 0 12px rgba(255,255,255,.4)',
+
     pointerEvents: 'none',
   };
 
@@ -99,130 +181,306 @@ const SplashScreen = ({ onComplete }) => {
     <Box
       role="status"
       aria-label="Loading portfolio"
+
       sx={{
         position: 'fixed',
         inset: 0,
+
         width: '100%',
         height: '100dvh',
+
         backgroundColor: '#000',
         color: '#fff',
-        zIndex: 20000,
+
         overflow: 'hidden',
+        zIndex: 20000,
 
         opacity: isLeaving ? 0 : 1,
+
         transform: isLeaving
           ? 'scale(1.035)'
           : 'scale(1)',
 
         transition:
           'opacity 650ms ease, transform 650ms ease',
+
+        '@media (prefers-reduced-motion: reduce)': {
+          '& .splash-motion': {
+            animation: 'none',
+          },
+        },
       }}
     >
       {/* =====================================
-          STARFIELD AND SHOOTING STARS
+          STARFIELD
       ====================================== */}
 
       <ShootingStars />
 
+      {/* SOFT BACKGROUND GLOW */}
+
+      <Box
+        sx={{
+          position: 'absolute',
+
+          left: '50%',
+          top: '45%',
+
+          transform: 'translate(-50%, -50%)',
+
+          width: {
+            xs: 420,
+            md: 900,
+          },
+
+          height: {
+            xs: 420,
+            md: 900,
+          },
+
+          background:
+            'radial-gradient(circle, rgba(255,255,255,.055), transparent 65%)',
+
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* =====================================
-          MOON AND ORBIT COMPOSITION
+          MAIN SPACE COMPOSITION
       ====================================== */}
 
       <Box
         sx={{
           position: 'absolute',
+
           left: '50%',
+
           top: {
-            xs: '45%',
+            xs: '44%',
             md: '46%',
           },
+
           transform: 'translate(-50%, -50%)',
 
           width: {
             xs: '96vw',
-            md: 960,
+            md: 'min(94vw, 1080px)',
           },
 
           height: {
-            xs: 350,
-            md: 570,
+            xs: 'min(82vw, 380px)',
+            sm: 520,
+            md: 620,
           },
 
           maxWidth: '100%',
         }}
       >
-        {/* ORBIT BEHIND MOON */}
+        {/* ==================================
+            ORBIT BEHIND MOON
+        ================================== */}
 
         <Box
+          className="splash-motion"
           sx={{
-            ...ringStyle,
+            position: 'absolute',
+            inset: 0,
+
+            zIndex: 1,
+
+            animation:
+              `${orbitReveal} 1.4s ease .2s both`,
+          }}
+        >
+          <Box sx={orbitStyle} />
+        </Box>
+
+        {/* ==================================
+            MOON
+        ================================== */}
+
+        <Box
+          component="img"
+          className="splash-motion"
+
+          src={moon}
+          alt="Monochrome moon"
+
+          sx={{
+            position: 'absolute',
+
+            left: '50%',
+            top: '50%',
+
+            width: {
+              xs: '68%',
+              sm: 420,
+              md: 570,
+            },
+
+            maxWidth: 570,
+
+            aspectRatio: '1',
+            objectFit: 'contain',
+
+            transform: 'translate(-50%, -50%)',
+
+            filter:
+              'grayscale(1) brightness(.7) contrast(1.3)',
+
+            animation:
+              `${moonReveal} 1.6s cubic-bezier(.22,1,.36,1) both`,
+
+            pointerEvents: 'none',
+
             zIndex: 2,
           }}
         />
 
-        {/* MOON */}
+        {/* DARK CENTER FOR TEXT READABILITY */}
+
         <Box
-          component="img"
-          src={moon}
-          alt="Monochrome Moon"
           sx={{
             position: 'absolute',
+
             left: '50%',
-            top: '50%',
+            top: '54%',
+
             transform: 'translate(-50%, -50%)',
 
-            width: {
-              xs: 245,
-              sm: 350,
-              md: 500,
-            },
+            width: '85%',
+            height: '50%',
 
-            aspectRatio: '1',
-            objectFit: 'contain',
-            filter: 'grayscale(1)',
+            background:
+              'radial-gradient(ellipse, rgba(0,0,0,.72), rgba(0,0,0,.35) 50%, transparent 78%)',
+
+            pointerEvents: 'none',
 
             zIndex: 3,
-            pointerEvents: 'none',
           }}
         />
 
-        {/* ORBIT IN FRONT OF MOON */}
+        {/* ==================================
+            ORBIT IN FRONT OF MOON
+        ================================== */}
 
         <Box
+          className="splash-motion"
+
           sx={{
-            ...ringStyle,
+            position: 'absolute',
+            inset: 0,
+
             zIndex: 4,
 
-            clipPath: 'inset(51% 0 0 0)',
+            animation:
+              `${orbitReveal} 1.4s ease .35s both`,
+          }}
+        >
+          <Box
+            sx={{
+              ...orbitStyle,
 
-            borderColor: '#fff',
+              clipPath: 'inset(50% 0 0 0)',
 
-            boxShadow:
-              '0 0 16px rgba(255,255,255,.35)',
+              borderColor: '#fff',
+
+              boxShadow:
+                '0 0 15px rgba(255,255,255,.55)',
+            }}
+          />
+        </Box>
+
+        {/* ==================================
+            ORBIT LIGHT FLARE
+        ================================== */}
+
+        <Box
+          className="splash-motion"
+
+          sx={{
+            position: 'absolute',
+
+            right: '1%',
+            top: '47%',
+
+            width: 8,
+            height: 8,
+
+            borderRadius: '50%',
+            backgroundColor: '#fff',
+
+            boxShadow: `
+              0 0 12px 5px rgba(255,255,255,.75),
+              0 0 30px 10px rgba(255,255,255,.25)
+            `,
+
+            animation:
+              `${flarePulse} 3s ease-in-out infinite`,
+
+            zIndex: 5,
+
+            pointerEvents: 'none',
+
+            '&::before': {
+              content: '""',
+
+              position: 'absolute',
+
+              left: '50%',
+              top: '50%',
+
+              transform: 'translate(-50%, -50%)',
+
+              width: 80,
+              height: 1,
+
+              background:
+                'linear-gradient(90deg, transparent, #fff, transparent)',
+            },
+
+            '&::after': {
+              content: '""',
+
+              position: 'absolute',
+
+              left: '50%',
+              top: '50%',
+
+              transform: 'translate(-50%, -50%)',
+
+              width: 1,
+              height: 70,
+
+              background:
+                'linear-gradient(180deg, transparent, #fff, transparent)',
+            },
           }}
         />
 
-        {/* =====================================
+        {/* ==================================
             UFO LOTTIE
-        ====================================== */}
+        ================================== */}
 
         <Box
+          className="splash-motion"
+
           sx={{
             position: 'absolute',
 
             top: {
-              xs: '12%',
+              xs: '4%',
               md: '12%',
             },
 
             right: {
-              xs: '1%',
-              md: '10%',
+              xs: '2%',
+              md: '9%',
             },
 
             width: {
-              xs: 95,
-              sm: 125,
+              xs: 90,
+              sm: 135,
               md: 170,
             },
 
@@ -233,107 +491,193 @@ const SplashScreen = ({ onComplete }) => {
             pointerEvents: 'none',
 
             animation:
-              'ufoFloating 4s ease-in-out infinite',
-
-            '@keyframes ufoFloating': {
-              '0%, 100%': {
-                transform:
-                  'translateY(0px) rotate(-4deg)',
-              },
-
-              '50%': {
-                transform:
-                  'translateY(-14px) rotate(4deg)',
-              },
-            },
-
-            '@media (prefers-reduced-motion: reduce)': {
-              animation: 'none',
-            },
+              `${ufoFloat} 4s ease-in-out infinite`,
           }}
         >
           <Lottie
-            src={ufoAnimation}
+            animationData={ufoAnimation}
             autoplay
             loop
+
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
           />
         </Box>
 
-        {/* =====================================
-            CENTER TYPOGRAPHY
-        ====================================== */}
+        {/* ==================================
+            ORBIT TYPOGRAPHY
+        ================================== */}
 
         <Box
           sx={{
             position: 'absolute',
+
             left: '50%',
-            top: '52%',
+            top: '54%',
+
             transform: 'translate(-50%, -50%)',
 
             width: '100%',
+
+            px: {
+              xs: 1,
+              md: 3,
+            },
+
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+
             textAlign: 'center',
 
             zIndex: 8,
-
-            px: 1,
           }}
         >
+          {/* MAIN TITLE */}
+
           <Typography
             component="h1"
+            className="splash-motion"
+
             sx={{
-              fontFamily:
-                '"Arial Black", Impact, sans-serif',
+              fontFamily: 'Ethnocentric',
 
-              fontWeight: 900,
+              fontSize: {
+                xs: 'clamp(22px, 6.7vw, 45px)',
+                sm: 'clamp(40px, 6vw, 64px)',
+                md: 'clamp(60px, 5.2vw, 82px)',
+              },
 
-              fontSize:
-                'clamp(28px, 7.2vw, 105px)',
+              fontWeight: 400,
 
-              lineHeight: 1,
+              lineHeight: 1.15,
 
-              letterSpacing: '-0.04em',
-
-              color: '#fff',
+              letterSpacing: '-0.055em',
 
               whiteSpace: 'nowrap',
 
-              textShadow:
-                '0px 5px 16px rgba(0,0,0,.85)',
+              color: '#fff',
+
+              textShadow: `
+                0 3px 12px #000,
+                0 0 25px rgba(255,255,255,.2)
+              `,
+
+              animation:
+                `${textReveal} 1s cubic-bezier(.22,1,.36,1) .3s both`,
             }}
           >
             RAJA AL RIDHO
           </Typography>
 
-          <Typography
+          {/* ==================================
+              WELCOME ORBIT LABEL
+          ================================== */}
+
+          <Box
+            className="splash-motion"
+
             sx={{
-              mt: 1,
+              position: 'relative',
 
-              fontFamily: 'monospace',
-
-              fontSize: {
-                xs: 9,
-                sm: 12,
-                md: 16,
+              mt: {
+                xs: 1.2,
+                md: 2,
               },
 
-              letterSpacing: {
-                xs: '0.2em',
-                md: '0.5em',
+              px: {
+                xs: 2,
+                md: 4,
               },
 
-              color: 'rgba(255,255,255,.9)',
+              py: {
+                xs: 0.8,
+                md: 1.2,
+              },
 
-              textShadow:
-                '0 2px 10px #000',
+              maxWidth: '94%',
+
+              borderTop:
+                '1px solid rgba(255,255,255,.6)',
+
+              borderBottom:
+                '1px solid rgba(255,255,255,.6)',
+
+              backgroundColor:
+                'rgba(0,0,0,.88)',
+
+              backdropFilter: 'blur(8px)',
+
+              boxShadow:
+                '0 0 18px rgba(0,0,0,.8)',
+
+              animation:
+                `${textReveal} .9s cubic-bezier(.22,1,.36,1) .65s both`,
+
+              '&::before, &::after': {
+                content: '""',
+
+                position: 'absolute',
+
+                top: '50%',
+
+                width: {
+                  xs: 10,
+                  md: 24,
+                },
+
+                height: 1,
+
+                backgroundColor:
+                  'rgba(255,255,255,.7)',
+              },
+
+              '&::before': {
+                left: {
+                  xs: -12,
+                  md: -26,
+                },
+              },
+
+              '&::after': {
+                right: {
+                  xs: -12,
+                  md: -26,
+                },
+              },
             }}
           >
-            FROM IDEA TO INTERFACE
-          </Typography>
+            <Typography
+              sx={{
+                fontFamily: 'monospace',
+
+                fontSize: {
+                  xs: 'clamp(7px, 2vw, 10px)',
+                  md: 12,
+                },
+
+                fontWeight: 700,
+
+                letterSpacing: {
+                  xs: '0.1em',
+                  md: '0.28em',
+                },
+
+                color: '#fff',
+
+                whiteSpace: 'nowrap',
+              }}
+            >
+              WELCOME TO MY PORTFOLIO
+            </Typography>
+          </Box>
         </Box>
       </Box>
 
       {/* =====================================
-          JAVASCRIPT CIRCULAR LOADING
+          CIRCULAR LOADING
       ====================================== */}
 
       <Box
@@ -343,21 +687,28 @@ const SplashScreen = ({ onComplete }) => {
           left: '50%',
 
           bottom: {
-            xs: '12%',
-            md: '8%',
+            xs: '11%',
+            md: '7%',
           },
 
           transform: 'translateX(-50%)',
 
-          width: 88,
-          height: 88,
+          width: {
+            xs: 76,
+            md: 88,
+          },
+
+          height: {
+            xs: 76,
+            md: 88,
+          },
 
           borderRadius: '50%',
 
           background: `
             conic-gradient(
-              #ffffff ${progress * 3.6}deg,
-              rgba(255,255,255,.17) 0deg
+              #fff ${progress * 3.6}deg,
+              rgba(255,255,255,.15) 0deg
             )
           `,
 
@@ -365,16 +716,16 @@ const SplashScreen = ({ onComplete }) => {
           alignItems: 'center',
           justifyContent: 'center',
 
-          zIndex: 10,
-
           boxShadow:
-            '0 0 18px rgba(255,255,255,.06)',
+            '0 0 18px rgba(255,255,255,.08)',
+
+          zIndex: 10,
         }}
       >
         <Box
           sx={{
-            width: 82,
-            height: 82,
+            width: '93%',
+            height: '93%',
 
             borderRadius: '50%',
 
@@ -387,17 +738,18 @@ const SplashScreen = ({ onComplete }) => {
         >
           <Typography
             role="progressbar"
+
             aria-valuenow={progress}
             aria-valuemin={0}
             aria-valuemax={100}
+
             sx={{
               fontFamily: 'monospace',
 
-              fontSize: 13,
-
-              letterSpacing: 2,
-
+              fontSize: 12,
               fontWeight: 700,
+
+              letterSpacing: 1.5,
 
               color: '#fff',
             }}
