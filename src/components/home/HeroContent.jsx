@@ -38,8 +38,10 @@ const HeroContent = () => {
         sx={{
           fontSize: {
             xs: '30px',
+            sm: '40px',
             md: '52px',
-            lg: '52px',
+            lg: '40px',
+            xl: '52px',
           },
           lineHeight: 0.95,
           fontWeight: 900,

@@ -206,24 +206,27 @@ const HeroArtwork = () => {
           left: {
             xs: '75%',      // Dorong ke tengah (50% dari lebar layar) saat mobile
             md: '50%',
-            lg: 'auto',     // Reset ke default saat desktop
+            lg: 'auto',
+            xl: 'auto',     // Reset ke default saat desktop
           },
           right: {
             xs: 'auto',     // Nonaktifkan right saat mobile
             md: 'auto',
-            lg: '21%',      // Kembali ke posisi kanan asli saat desktop
+            lg: '6%',      // Kembali ke posisi kanan asli saat desktop
+            xl: '21%',      // Kembali ke posisi kanan asli saat desktop
           },
           transform: {
             xs: 'translateX(-50%)', // Geser kembali setengah lebar video agar presisi di tengah
             md: 'translateX(-50%)',            // Matikan transform saat desktop
             lg: 'none',      // Kembalikan ke posisi default saat desktop
+            xl: 'none',      // Kembalikan ke posisi default saat desktop
           },
 
           bottom: {
             xs: '6%',
             sm: '12%',
             md: '10%',
-            lg: '16%',
+            lg: '24%',
             xl: '24%',
           },
 
@@ -231,7 +234,8 @@ const HeroArtwork = () => {
             xs: '215px',
             sm: '336px',
             md: '353px',
-            lg: '440px',
+            lg: '390px',
+            xl: '440px',
           },
 
           height: 'auto',
