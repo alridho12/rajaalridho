@@ -22,6 +22,8 @@ import { testimonials }
 import star
   from '../../assets/images/star.png';
 
+import { useLanguage } from '../../i18n/LanguageContext';
+
 
 const marquee = keyframes`
   from {
@@ -35,7 +37,7 @@ const marquee = keyframes`
 
 
 const ContactSection = () => {
-
+  const { t } = useLanguage();
   return (
     <Box
       component="section"
@@ -249,10 +251,7 @@ const ContactSection = () => {
                   'rgba(255,255,255,.55)',
               }}
             >
-              Have a project, collaboration,
-              or idea in mind? Tell me what
-              you're working on and let's turn
-              it into a digital experience.
+              {t('contact.subheading')}
             </Typography>
 
 
@@ -268,7 +267,7 @@ const ContactSection = () => {
               }}
             >
 
-              <Box
+              {/* <Box
                 sx={{
                   width: 9,
                   height: 9,
@@ -293,7 +292,7 @@ const ContactSection = () => {
                 }}
               >
                 AVAILABLE FOR FREELANCE
-              </Typography>
+              </Typography> */}
 
             </Stack>
 
@@ -337,7 +336,7 @@ const ContactSection = () => {
                 mb: 4,
               }}
             >
-              START A PROJECT
+              {t('contact.form.title')}
             </Typography>
 
 
@@ -346,7 +345,7 @@ const ContactSection = () => {
               <TextField
                 fullWidth
                 variant="standard"
-                label="YOUR NAME"
+                label={t('contact.form.name')}
 
                 InputLabelProps={{
                   sx: {
@@ -380,7 +379,7 @@ const ContactSection = () => {
               <TextField
                 fullWidth
                 variant="standard"
-                label="EMAIL"
+                label={t('contact.form.email')}
 
                 InputLabelProps={{
                   sx: {
@@ -418,7 +417,7 @@ const ContactSection = () => {
 
                 variant="standard"
 
-                label="TELL ME ABOUT YOUR PROJECT"
+                label={t('contact.form.message')}
 
                 InputLabelProps={{
                   sx: {
@@ -483,7 +482,7 @@ const ContactSection = () => {
                   },
                 }}
               >
-                SEND MESSAGE
+                {t('contact.form.submit')}
               </Button>
 
             </Stack>
@@ -542,7 +541,7 @@ const ContactSection = () => {
                   mb: 1,
                 }}
               >
-                WHAT THEY SAY
+                {t('contact.label2')}
               </Typography>
 
 
@@ -586,9 +585,7 @@ const ContactSection = () => {
 
               }}
             >
-              Feedback from people I've had
-              the opportunity to collaborate
-              and build digital products with.
+              {t('contact.subheading2')}
             </Typography>
 
           </Stack>
@@ -607,7 +604,7 @@ const ContactSection = () => {
               },
 
               gap: 2.5,
-              mt : 4,
+              mt: 4,
             }}
           >
 

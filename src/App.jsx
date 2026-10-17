@@ -1,8 +1,13 @@
-import { Box } from '@mui/material';
-
-import FloatingNavbar from './components/layout/FloatingNavbar';
 
 import { useState } from 'react';
+
+import { Box } from '@mui/material';
+
+import { LanguageProvider } from './i18n/LanguageContext';
+
+import LanguageSwitcher from './components/layout/LanguageSwitcher';
+import FloatingNavbar from './components/layout/FloatingNavbar';
+
 import SplashScreen from './components/splash/SplashScreen';
 
 import HomeSection from './components/home/HomeSection';
@@ -13,26 +18,33 @@ import CyberDodgeSection from './components/game/CyberDodgeSection';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
+
   return (
-    <Box>
-      <HomeSection />
+    <LanguageProvider>
+      <Box>
+        <HomeSection />
 
-      <AboutSection />
+        <AboutSection />
 
-      <ProjectsSection />
+        <ProjectsSection />
 
-      <CyberDodgeSection />
+        <CyberDodgeSection />
 
-      <ContactSection />
+        <ContactSection />
 
-      <FloatingNavbar />
+        <FloatingNavbar />
 
-      {showSplash && (
-        <SplashScreen
-          onComplete={() => setShowSplash(false)}
-        />
-      )}
-    </Box>
+        {/* FLOATING LANGUAGE BUTTON */}
+        <LanguageSwitcher />
+
+        {/* SPLASH SCREEN */}
+        {showSplash && (
+          <SplashScreen
+            onComplete={() => setShowSplash(false)}
+          />
+        )}
+      </Box>
+    </LanguageProvider>
   );
 }
 

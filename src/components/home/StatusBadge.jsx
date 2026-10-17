@@ -1,6 +1,10 @@
 import { Box, Typography } from '@mui/material';
+import { useLanguage } from '../../i18n/LanguageContext';
+
 
 const StatusBadge = () => {
+  const { t } = useLanguage();
+
   return (
     <Box
       sx={{
@@ -42,7 +46,7 @@ const StatusBadge = () => {
             fontWeight: 800,
           }}
         >
-          AVAILABLE FOR FREELANCE
+          {t('home.availability')}
         </Typography>
       </Box>
     </Box>

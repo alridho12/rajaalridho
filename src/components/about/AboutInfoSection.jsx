@@ -16,6 +16,7 @@ import {
 
 import star from '../../assets/images/star.png';
 import profile from '../../assets/images/profile-about.png';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 // ==========================================
 // MARQUEE
@@ -75,37 +76,6 @@ const glowPulse = keyframes`
   }
 `;
 
-// ==========================================
-// INFORMATION DATA
-// ==========================================
-
-const infoItems = [
-  {
-    number: '01',
-    title: 'WEB DEVELOPMENT',
-    description:
-      'Modern, responsive and scalable web experiences.',
-  },
-  {
-    number: '02',
-    title: 'MOBILE DEVELOPMENT',
-    description:
-      'Interfaces designed for intuitive mobile experiences.',
-  },
-  {
-    number: '03',
-    title: 'UI / UX DESIGN',
-    description:
-      'Digital products designed with usability and visual identity in mind.',
-  },
-  {
-    number: '04',
-    title: 'CREATIVE DEVELOPMENT',
-    description:
-      'Interactive interfaces that combine design, motion and technology.',
-  },
-];
-
 const technologies = [
   'REACT',
   'LARAVEL',
@@ -127,6 +97,38 @@ const marqueeTexts = [
 
 const AboutInfoSection = () => {
   const reducedMotion = useReducedMotion();
+  const { t } = useLanguage();
+
+  // ==========================================
+  // INFORMATION DATA
+  // ==========================================
+
+  const infoItems = [
+    {
+      number: '01',
+      title: 'WEB DEVELOPMENT',
+      description:
+        t('about.services.webDescription'),
+    },
+    {
+      number: '02',
+      title: 'MOBILE DEVELOPMENT',
+      description:
+        t('about.services.mobileDescription'),
+    },
+    {
+      number: '03',
+      title: 'UI / UX DESIGN',
+      description:
+        t('about.services.uiDescription'),
+    },
+    {
+      number: '04',
+      title: 'CREATIVE DEVELOPMENT',
+      description:
+        t('about.services.creativeDescription'),
+    },
+  ];
 
   // ========================================
   // REUSABLE SCROLL REVEAL
@@ -332,7 +334,7 @@ const AboutInfoSection = () => {
               display: 'block',
             }}
           >
-            FROM IDEA
+            {t('about.title1')}
           </Box>
 
           <Box
@@ -343,7 +345,7 @@ const AboutInfoSection = () => {
               mt: 1,
             }}
           >
-            TO INTERFACE.
+            {t('about.title2')}
           </Box>
         </Typography>
 
@@ -416,7 +418,7 @@ const AboutInfoSection = () => {
                 },
               }}
             >
-              YEARS BUILDING
+              {t('about.years1')}
             </Typography>
 
             <Typography
@@ -431,7 +433,7 @@ const AboutInfoSection = () => {
                 },
               }}
             >
-              DIGITAL PRODUCTS
+              {t('about.years2')}
             </Typography>
 
             <Box
@@ -464,10 +466,7 @@ const AboutInfoSection = () => {
                 },
               }}
             >
-              I combine web development and UI/UX
-              design to create responsive,
-              intuitive, and visually engaging
-              digital experiences.
+              {t('about.description')}
             </Typography>
           </Box>
 
@@ -731,7 +730,7 @@ const AboutInfoSection = () => {
                 mb: 2,
               }}
             >
-              WHAT I DO
+              {t('about.whatIDo')}
             </Typography>
 
             <Typography
@@ -746,11 +745,11 @@ const AboutInfoSection = () => {
                 mb: 4,
               }}
             >
-              CODE.
+              {t('about.code')}
               <br />
-              DESIGN.
+              {t('about.design')}
               <br />
-              CREATE.
+              {t('about.create')}
             </Typography>
 
             {/* STAGGERED TECH BADGES */}

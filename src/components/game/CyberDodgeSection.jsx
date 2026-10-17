@@ -12,6 +12,8 @@ import {
   Typography,
 } from '@mui/material';
 
+import { useLanguage } from '../../i18n/LanguageContext';
+
 
 // ==========================================
 // INITIAL GAME STATE
@@ -42,7 +44,7 @@ const createInitialGame = () => ({
 
 const CyberDodgeSection = () => {
   const canvasRef = useRef(null);
-
+  const { t } = useLanguage();
   const gameRef = useRef(
     createInitialGame()
   );
@@ -1148,10 +1150,9 @@ const CyberDodgeSection = () => {
               lineHeight: 1.8,
             }}
           >
-            Dodge the obstacles. Survive the system.
-            <br />
+            {t('game.description1')}<br />
 
-            How long can you stay alive?
+            {t('game.description2')}
           </Typography>
         </Box>
 
@@ -1427,7 +1428,7 @@ const CyberDodgeSection = () => {
                     }}
                   >
                     {status === 'ready'
-                      ? 'Avoid the red gates and collect your score.'
+                      ? t('game.status')
                       : `Final score: ${score}`}
                   </Typography>
 
@@ -1599,7 +1600,7 @@ const CyberDodgeSection = () => {
                 color: '#72f6ff',
               }}
             >
-              SURVIVE THE SYSTEM_
+              SURVIVE THE SYSTEM
             </Typography>
           </Stack>
         </Box>

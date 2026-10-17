@@ -5,8 +5,12 @@ import {
 } from '@mui/material';
 
 import AppButton from '../common/AppButton';
+import { useLanguage } from '../../i18n/LanguageContext';
+
 
 const HeroContent = () => {
+  const { t } = useLanguage();
+
   return (
     <Box
       sx={{
@@ -26,7 +30,7 @@ const HeroContent = () => {
           mb: 1,
         }}
       >
-        UI/UX DESIGNER • WEB & MOBILE DEVELOPER
+        {t('home.role')}
       </Typography>
 
       <Typography
@@ -42,7 +46,7 @@ const HeroContent = () => {
           maxWidth: 700,
         }}
       >
-        I DESIGN AND BUILD{" "}
+        {t('home.heading1')}
         <Box
           component="br"
           sx={{
@@ -52,7 +56,7 @@ const HeroContent = () => {
             }
           }}
         />
-        MODERN WEBSITES{" "}
+        {t('home.heading2')}
         <Box
           component="br"
           sx={{
@@ -62,7 +66,7 @@ const HeroContent = () => {
             }
           }}
         />
-        THAT STAND OUT.
+        {t('home.heading3')}
       </Typography>
 
 
@@ -81,8 +85,7 @@ const HeroContent = () => {
           color: 'rgba(255,255,255,.85)',
         }}
       >
-        Distinctive websites and mobile products
-        designed to look great and work even better.
+        {t('home.description')}
       </Typography>
 
       <Stack
@@ -110,7 +113,7 @@ const HeroContent = () => {
             },
           }}
         >
-          VIEW MY PROJECTS
+          {t('home.availability')}
         </AppButton>
 
         <AppButton
@@ -123,7 +126,7 @@ const HeroContent = () => {
             },
           }}
         >
-          LET'S WORK TOGETHER
+          {t('home.btn2')}
         </AppButton>
       </Stack>
     </Box>
