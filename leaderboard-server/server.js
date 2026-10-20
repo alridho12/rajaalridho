@@ -1,28 +1,32 @@
 
 const express = require('express');
 const cors = require('cors');
-
-const fs = require('node:fs');
-const path = require('node:path');
+const { Redis } = require('@upstash/redis');
 const { randomUUID } = require('node:crypto');
+
+// ==========================================
+// SERVER CONFIGURATION
+// ==========================================
 
 const app = express();
 
 const PORT = process.env.PORT || 4000;
 
-const DATA_DIR =
-  process.env.DATA_DIR ||
-  path.join(__dirname, 'data');
-
-const FILE_PATH = path.join(
-  DATA_DIR,
-  'leaderboard.json'
-);
+const LEADERBOARD_KEY = 'cyber-dodge:top5';
 
 const MAX_PLAYERS = 5;
 
 // ==========================================
-// ALLOWED FRONTEND DOMAINS
+// UPSTASH REDIS CONNECTION
+// ==========================================
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+// ==========================================
+// CORS CONFIGURATION
 // ==========================================
 
 const allowedOrigins = (
@@ -50,54 +54,68 @@ app.use(
 app.use(express.json({ limit: '2kb' }));
 
 // ==========================================
-// PREPARE STORAGE
+// READ GLOBAL TOP 5
 // ==========================================
 
-fs.mkdirSync(DATA_DIR, {
-  recursive: true,
-});
+const getLeaderboard = async () => {
+  // Read the five highest Redis scores.
 
-if (!fs.existsSync(FILE_PATH)) {
-  fs.writeFileSync(
-    FILE_PATH,
-    JSON.stringify([], null, 2)
-  );
-}
-
-// ==========================================
-// READ AND WRITE JSON
-// ==========================================
-
-const readLeaderboard = () => {
-  const data = JSON.parse(
-    fs.readFileSync(FILE_PATH, 'utf8')
+  const results = await redis.zrange(
+    LEADERBOARD_KEY,
+    0,
+    MAX_PLAYERS - 1,
+    {
+      rev: true,
+      withScores: true,
+    }
   );
 
-  return Array.isArray(data) ? data : [];
+  const leaderboard = [];
+
+  // Results:
+  // [member, score, member, score, ...]
+
+  for (let i = 0; i < results.length; i += 2) {
+    const member = String(results[i]);
+
+    const score = Number(results[i + 1]);
+
+    const separator = member.indexOf('|');
+
+    if (separator === -1) continue;
+
+    const id = member.slice(0, separator);
+
+    const encodedName = member.slice(
+      separator + 1
+    );
+
+    leaderboard.push({
+      id,
+      name: decodeURIComponent(encodedName),
+      score,
+    });
+  }
+
+  return leaderboard;
 };
 
-const writeLeaderboard = (records) => {
-  const tempPath = `${FILE_PATH}.tmp`;
-
-  fs.writeFileSync(
-    tempPath,
-    JSON.stringify(records, null, 2)
-  );
-
-  fs.renameSync(tempPath, FILE_PATH);
-};
-
 // ==========================================
-// REAL-TIME CONNECTIONS
+// LIVE UPDATE CLIENTS
 // ==========================================
 
 const clients = new Set();
 
 const broadcastLeaderboard = (records) => {
-  const message = `data: ${JSON.stringify(records)}\n\n`;
+  const message =
+    `data: ${JSON.stringify(records)}\n\n`;
 
   clients.forEach((client) => {
-    client.write(message);
+    try {
+      client.write(message);
+    } catch {
+      clients.delete(client);
+    }
   });
 };
 
@@ -109,22 +127,25 @@ app.get('/', (req, res) => {
   res.json({
     status: 'online',
     service: 'Cyber Dodge Leaderboard',
+    storage: 'Upstash Redis',
   });
 });
 
 // ==========================================
-// GET GLOBAL TOP 5
+// GET GLOBAL LEADERBOARD
 // ==========================================
 
-app.get('/api/leaderboard', (req, res) => {
+app.get('/api/leaderboard', async (req, res) => {
   try {
-    const leaderboard = readLeaderboard();
+    const leaderboard = await getLeaderboard();
+
+    res.setHeader('Cache-Control', 'no-store');
 
     res.json({
       leaderboard,
     });
   } catch (error) {
-    console.error(error);
+    console.error('GET leaderboard:', error);
 
     res.status(500).json({
       error: 'Failed to load leaderboard',
@@ -133,67 +154,86 @@ app.get('/api/leaderboard', (req, res) => {
 });
 
 // ==========================================
-// REAL-TIME LEADERBOARD EVENTS
+// REAL-TIME LEADERBOARD STREAM
 // ==========================================
 
 app.get(
   '/api/leaderboard/events',
-  (req, res) => {
-    res.setHeader(
-      'Content-Type',
-      'text/event-stream'
-    );
+  async (req, res) => {
+    try {
+      const leaderboard =
+        await getLeaderboard();
 
-    res.setHeader(
-      'Cache-Control',
-      'no-cache, no-transform'
-    );
+      res.setHeader(
+        'Content-Type',
+        'text/event-stream'
+      );
 
-    res.setHeader(
-      'Connection',
-      'keep-alive'
-    );
+      res.setHeader(
+        'Cache-Control',
+        'no-cache, no-transform'
+      );
 
-    res.setHeader(
-      'X-Accel-Buffering',
-      'no'
-    );
+      res.setHeader(
+        'Connection',
+        'keep-alive'
+      );
 
-    res.flushHeaders?.();
+      res.setHeader(
+        'X-Accel-Buffering',
+        'no'
+      );
 
-    clients.add(res);
+      res.flushHeaders?.();
 
-    // Send current leaderboard immediately
+      clients.add(res);
 
-    res.write(
-      `data: ${JSON.stringify(
-        readLeaderboard()
-      )}\n\n`
-    );
+      // Send initial data
 
-    // Keep connection alive
+      res.write(
+        `data: ${JSON.stringify(
+          leaderboard
+        )}\n\n`
+      );
 
-    const heartbeat = setInterval(() => {
-      res.write(': heartbeat\n\n');
-    }, 25000);
+      // Keep connection alive
 
-    req.on('close', () => {
-      clearInterval(heartbeat);
-      clients.delete(res);
-    });
+      const heartbeat = setInterval(() => {
+        res.write(': heartbeat\n\n');
+      }, 25000);
+
+      req.on('close', () => {
+        clearInterval(heartbeat);
+
+        clients.delete(res);
+      });
+    } catch (error) {
+      console.error('SSE error:', error);
+
+      if (!res.headersSent) {
+        res.status(500).json({
+          error: 'Leaderboard stream unavailable',
+        });
+      } else {
+        res.end();
+      }
+    }
   }
 );
 
 // ==========================================
-// SUBMIT NEW SCORE
+// SAVE NEW PLAYER SCORE
 // ==========================================
 
-app.post('/api/leaderboard', (req, res) => {
+app.post('/api/leaderboard', async (req, res) => {
   try {
     const rawName = req.body?.name;
+
     const score = req.body?.score;
 
-    // Validate player name
+    // ======================================
+    // VALIDATE NAME
+    // ======================================
 
     if (typeof rawName !== 'string') {
       return res.status(400).json({
@@ -210,11 +250,13 @@ app.post('/api/leaderboard', (req, res) => {
       name.length > 16
     ) {
       return res.status(400).json({
-        error: 'Name must contain 1–16 characters',
+        error: 'Name must contain 1-16 characters',
       });
     }
 
-    // Validate score
+    // ======================================
+    // VALIDATE SCORE
+    // ======================================
 
     if (
       !Number.isSafeInteger(score) ||
@@ -227,11 +269,11 @@ app.post('/api/leaderboard', (req, res) => {
       });
     }
 
-    const current = readLeaderboard()
-      .sort((a, b) => b.score - a.score)
-      .slice(0, MAX_PLAYERS);
+    // ======================================
+    // CHECK TOP FIVE
+    // ======================================
 
-    // Check Top 5 qualification
+    const current = await getLeaderboard();
 
     if (
       current.length >= MAX_PLAYERS &&
@@ -243,28 +285,60 @@ app.post('/api/leaderboard', (req, res) => {
       });
     }
 
-    // Add new player
+    // ======================================
+    // CREATE NEW RECORD
+    // ======================================
 
-    const newPlayer = {
-      id: randomUUID(),
-      name,
+    const id = randomUUID();
+
+    const member =
+      `${id}|${encodeURIComponent(name)}`;
+
+    // ======================================
+    // SAVE TO UPSTASH REDIS
+    // ======================================
+
+    // Sorted sets automatically order
+    // scores. Transaction keeps insertion
+    // and trimming together.
+
+    const transaction = redis.multi();
+
+    transaction.zadd(LEADERBOARD_KEY, {
       score,
-    };
+      member,
+    });
 
-    // Sort and keep only five players
+    // Remove all entries below the top 5.
 
-    const updated = [
-      ...current,
-      newPlayer,
-    ]
-      .sort((a, b) => b.score - a.score)
-      .slice(0, MAX_PLAYERS);
+    transaction.zremrangebyrank(
+      LEADERBOARD_KEY,
+      0,
+      -(MAX_PLAYERS + 1)
+    );
 
-    // Persist to JSON file
+    await transaction.exec();
 
-    writeLeaderboard(updated);
+    // ======================================
+    // GET UPDATED TOP FIVE
+    // ======================================
 
-    // Notify all connected visitors
+    const updated = await getLeaderboard();
+
+    const qualified = updated.some(
+      (player) => player.id === id
+    );
+
+    if (!qualified) {
+      return res.status(409).json({
+        error: 'Score no longer qualifies',
+        leaderboard: updated,
+      });
+    }
+
+    // ======================================
+    // BROADCAST TO VISITORS
+    // ======================================
 
     broadcastLeaderboard(updated);
 
@@ -273,7 +347,7 @@ app.post('/api/leaderboard', (req, res) => {
       leaderboard: updated,
     });
   } catch (error) {
-    console.error(error);
+    console.error('POST leaderboard:', error);
 
     res.status(500).json({
       error: 'Failed to save score',
@@ -282,11 +356,11 @@ app.post('/api/leaderboard', (req, res) => {
 });
 
 // ==========================================
-// START SERVER
+// START EXPRESS SERVER
 // ==========================================
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(
-    `Leaderboard API running on port ${PORT}`
+    `Cyber Dodge API running on port ${PORT}`
   );
 });
