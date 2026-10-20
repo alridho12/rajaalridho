@@ -35,3 +35,4 @@ dist/
 *.log
 
 leaderboard-server/data/
+leaderboard-server/node_modules/
