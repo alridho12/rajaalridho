@@ -25,9 +25,9 @@ import { useLanguage } from '../../i18n/LanguageContext';
 // ==========================================
 
 
-const API_URL =
-  import.meta.env.VITE_LEADERBOARD_API ||
-  'http://localhost:4000';
+
+const API_URL = '/api/leaderboard';
+
 const BEST_SCORE_KEY = 'cyber-dodge-best';
 const MAX_LEADERBOARD = 5;
 
@@ -169,6 +169,7 @@ const CyberDodgeSection = () => {
   }, [leaderboard]);
 
 
+
   // ==========================================
   // GLOBAL LEADERBOARD SYNC
   // ==========================================
@@ -176,83 +177,70 @@ const CyberDodgeSection = () => {
   useEffect(() => {
     let active = true;
 
-    // Update leaderboard React
-
-    const updateLeaderboard = (records) => {
-      if (!active || !Array.isArray(records)) {
-        return;
-      }
-
-      leaderboardRef.current = records;
-
-      setLeaderboard(records);
-    };
-
-    // Ambil data dari server
-
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/api/leaderboard`
-        );
+        const response = await fetch(API_URL, {
+          cache: 'no-store',
+        });
 
         if (!response.ok) {
-          throw new Error('Gagal mengambil leaderboard');
+          throw new Error(
+            'Failed to fetch leaderboard'
+          );
         }
 
         const data = await response.json();
 
-        updateLeaderboard(data.leaderboard);
+        if (active && Array.isArray(data.leaderboard)) {
+          leaderboardRef.current =
+            data.leaderboard;
+
+          setLeaderboard(data.leaderboard);
+        }
       } catch (error) {
         console.error(
-          'Leaderboard error:',
+          'Leaderboard sync error:',
           error
         );
       }
     };
+
+    // Fetch leaderboard on first load
 
     fetchLeaderboard();
 
-    // Dengarkan perubahan secara real-time
-
-    const eventSource = new EventSource(
-      `${API_URL}/api/leaderboard/events`
-    );
-
-    eventSource.onmessage = (event) => {
-      try {
-        const records = JSON.parse(event.data);
-
-        updateLeaderboard(records);
-      } catch (error) {
-        console.error(
-          'Invalid leaderboard data:',
-          error
-        );
-      }
-    };
-
-    eventSource.onerror = () => {
-      console.warn(
-        'Leaderboard connection interrupted. Reconnecting...'
-      );
-    };
-
-    // Sinkronisasi cadangan setiap 30 detik
+    // Update every 30 seconds
 
     const interval = setInterval(
       fetchLeaderboard,
       30000
     );
 
+    // Refresh when visitor returns to the tab
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchLeaderboard();
+      }
+    };
+
+    document.addEventListener(
+      'visibilitychange',
+      handleVisibilityChange
+    );
+
     return () => {
       active = false;
 
-      eventSource.close();
-
       clearInterval(interval);
+
+      document.removeEventListener(
+        'visibilitychange',
+        handleVisibilityChange
+      );
     };
   }, []);
+
 
 
   // ========================================
@@ -380,21 +368,19 @@ const CyberDodgeSection = () => {
     setSaveError('');
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/leaderboard`,
-        {
-          method: 'POST',
+      const response = await fetch(API_URL, {
+        method: 'POST',
 
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        headers: {
+          'Content-Type': 'application/json',
+        },
 
-          body: JSON.stringify({
-            name: cleanName,
-            score: pendingScore,
-          }),
-        }
-      );
+        body: JSON.stringify({
+          name: cleanName,
+          score: pendingScore,
+        }),
+      });
+
 
       const data = await response.json();
 
