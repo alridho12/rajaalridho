@@ -8,7 +8,7 @@ import {
 
 import { keyframes } from '@emotion/react';
 
-import {Lottie} from 'lottie-react';
+import { Lottie } from 'lottie-react';
 
 import ShootingStars from './ShootingStars';
 
@@ -670,7 +670,7 @@ const SplashScreen = ({ onComplete }) => {
                 whiteSpace: 'nowrap',
               }}
             >
-              WELCOME TO MY PORTFOLIO
+              BEYOND CODE & DESIGN
             </Typography>
           </Box>
         </Box>
