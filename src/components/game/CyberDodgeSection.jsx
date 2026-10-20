@@ -627,10 +627,12 @@ const CyberDodgeSection = () => {
             movementSpeed * deltaTime;
         }
 
+
         game.playerX = Math.max(
-          -1,
-          Math.min(1, game.playerX)
+          -0.8,
+          Math.min(0.8, game.playerX)
         );
+
 
         // Speed progression
 
