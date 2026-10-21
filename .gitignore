@@ -36,3 +36,6 @@ dist/
 
 leaderboard-server/data/
 leaderboard-server/node_modules/
+
+.vercel
+.env*

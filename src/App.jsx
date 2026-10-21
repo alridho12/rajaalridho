@@ -15,6 +15,7 @@ import AboutSection from './components/about/AboutSection';
 import ProjectsSection from './components/projects/ProjectsSection';
 import ContactSection from './components/contact/ContactSection';
 import CyberDodgeSection from './components/game/CyberDodgeSection';
+import VisitorGlobeSection from './components/globe/VisitorGlobeSection';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -29,6 +30,8 @@ function App() {
         <ProjectsSection />
 
         <CyberDodgeSection />
+
+        <VisitorGlobeSection />
 
         <ContactSection />
 

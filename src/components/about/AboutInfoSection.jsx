@@ -633,7 +633,7 @@ const AboutInfoSection = () => {
                   objectFit: 'cover',
 
                   filter:
-                    'grayscale(1) contrast(1.1)',
+                    'grayscale(1) contrast(1.1) drop-shadow(0 0 4px #f6f6f65a)',
 
                   objectPosition: 'center top',
 
