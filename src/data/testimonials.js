@@ -28,4 +28,14 @@ export const testimonials = [
       'The result exceeded what we initially imagined. The interface feels modern, responsive, and the development process was well structured.',
     rating: 5,
   },
+
+  {
+    id: 4,
+    name: 'Rizky Ramadhan',
+    role: 'Frontend Developer',
+    company: 'Binar Academy',
+    feedback:
+      'The website has a clean and modern design, making it easy to navigate. It also has a responsive layout that looks great on different devices.',
+    rating: 5,
+  },
 ];

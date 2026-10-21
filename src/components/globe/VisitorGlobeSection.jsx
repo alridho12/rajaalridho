@@ -729,7 +729,7 @@ const VisitorGlobeSection = () => {
               fontFamily: 'monospace',
               fontSize: 11,
               letterSpacing: 3,
-              color: CYAN,
+              color: 'rgba(255, 255, 255, 0.6);',
               fontWeight: 800,
               mb: 2,
             }}

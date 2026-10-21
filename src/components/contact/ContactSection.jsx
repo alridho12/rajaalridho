@@ -24,6 +24,8 @@ import star
 
 import { useLanguage } from '../../i18n/LanguageContext';
 
+import { useState } from 'react';
+
 
 const marquee = keyframes`
   from {
@@ -35,9 +37,75 @@ const marquee = keyframes`
   }
 `;
 
+const floatA = keyframes`
+  0%, 100% {
+    opacity: 0;
+    transform: translate3d(-15px, 20px, 0) rotate(-5deg);
+  }
+  15%, 65% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate3d(15px, -15px, 0) rotate(-2deg);
+  }
+  85% {
+    opacity: 0;
+    transform: translate3d(-10px, -25px, 0) rotate(-4deg);
+  }
+`;
+
+const floatB = keyframes`
+  0%, 100% {
+    opacity: 0;
+    transform: translate3d(18px, -10px, 0) rotate(5deg);
+  }
+  15%, 70% {
+    opacity: 1;
+  }
+  45% {
+    transform: translate3d(-18px, 18px, 0) rotate(2deg);
+  }
+  88% {
+    opacity: 0;
+    transform: translate3d(10px, -20px, 0) rotate(6deg);
+  }
+`;
+
+const floatC = keyframes`
+  0%, 100% {
+    opacity: 0;
+    transform: translate3d(-10px, 18px, 0) rotate(3deg);
+  }
+  18%, 72% {
+    opacity: 1;
+  }
+  48% {
+    transform: translate3d(20px, -15px, 0) rotate(-2deg);
+  }
+  90% {
+    opacity: 0;
+    transform: translate3d(-16px, 12px, 0) rotate(4deg);
+  }
+`;
+
+const floatingAnimations = [floatA, floatB, floatC];
+
+const floatingPositions = [
+  { top: '3%', left: '8%', width: '48%', zIndex: 4 },
+  { top: '22%', left: '57%', width: '42%', zIndex: 3 },
+  { top: '52%', left: '1%', width: '45%', zIndex: 5 },
+  { top: '59%', left: '52%', width: '47%', zIndex: 4 },
+  { top: '34%', left: '29%', width: '36%', zIndex: 2 },
+];
+
+
 
 const ContactSection = () => {
   const { t } = useLanguage();
+
+  const [activeMobileCard, setActiveMobileCard] =
+    useState(null);
+
   return (
     <Box
       component="section"
@@ -493,140 +561,282 @@ const ContactSection = () => {
 
 
         {/* ==================================
-            CLIENT FEEDBACK
+            COSMIC FLOATING CLIENT FEEDBACK
         ================================== */}
 
         <Box
           sx={{
-            mt: {
-              xs: 14,
-              md: 20,
-            },
-            mb: {
-              xs: 10,
-              md: 14,
-            },
+            position: 'relative',
+            mt: { xs: 12, md: 20 },
+            mb: { xs: 10, md: 14 },
           }}
         >
+          {/* HEADING */}
 
-          <Stack
-            direction={{
-              xs: 'column',
-              // md: 'row',
+          <Box
+            sx={{
+              position: 'relative',
+              zIndex: 6,
+              maxWidth: 330,
             }}
-
-            justifyContent="space-between"
-
-            alignItems={{
-              xs: 'flex-start',
-              // md: 'end',
-            }}
-
-            spacing={3}
-
-            mb={6}
           >
+            <Typography
+              sx={{
+                fontSize: 11,
+                letterSpacing: 2,
+                color: 'rgba(255,255,255,.45)',
+                mb: 1.5,
+              }}
+            >
+              {t('contact.label2')}
+            </Typography>
 
-            <Box>
-
-              <Typography
-                sx={{
-                  fontSize: 11,
-
-                  letterSpacing: 2,
-
-                  color:
-                    'rgba(255,255,255,.45)',
-
-                  mb: 1,
-                }}
-              >
-                {t('contact.label2')}
-              </Typography>
-
-
-              <Typography
-                component="h3"
-
-                sx={{
-                  fontSize: {
-                    xs: 38,
-                    md: 58,
-                  },
-
-                  fontWeight: 900,
-
-                  lineHeight: 1,
-                  // mb: {
-                  //   xs: 1,
-                  //   xl:0
-                  // },
-                }}
-              >
-                CLIENT
-                <br />
-
-                FEEDBACK.
-              </Typography>
-
-            </Box>
-
+            <Typography
+              component="h3"
+              sx={{
+                fontSize: { xs: 40, md: 58 },
+                fontWeight: 900,
+                lineHeight: 0.95,
+                letterSpacing: -2,
+              }}
+            >
+              CLIENT
+              <br />
+              FEEDBACK.
+            </Typography>
 
             <Typography
               sx={{
-                maxWidth: 330,
-
+                mt: 3,
+                maxWidth: 310,
                 fontSize: 13,
-
-                lineHeight: 1.7,
-
-                color:
-                  'rgba(255,255,255,.5)',
-
+                lineHeight: 1.8,
+                color: 'rgba(255,255,255,.5)',
               }}
             >
               {t('contact.subheading2')}
             </Typography>
+          </Box>
 
-          </Stack>
-
-
-          {/* FEEDBACK GRID */}
+          {/* DESKTOP FLOATING CARDS */}
 
           <Box
             sx={{
-              display: 'grid',
+              position: 'relative',
+              display: { xs: 'none', md: 'block' },
 
-              gridTemplateColumns: {
-                xs: '1fr',
-                md:
-                  'repeat(3, 1fr)',
+              width: { md: '88%', lg: '90%' },
+              maxWidth: 1180,
+
+              height: { md: 760, lg: 820 },
+
+              ml: { md: '8%', lg: '6%' },
+              mt: { md: -12, lg: 0 },
+
+              isolation: 'isolate',
+
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '28%',
+                left: '8%',
+                width: '84%',
+                height: '42%',
+                border: '1px solid rgba(255,255,255,.06)',
+                borderRadius: '50%',
+                transform: 'rotate(-12deg)',
+                pointerEvents: 'none',
+                zIndex: 0,
               },
-
-              gap: 2.5,
-              mt: 4,
             }}
           >
+            {testimonials.slice(0, 5).map((testimonial, index) => {
+              const position = floatingPositions[index];
+              const animation =
+                floatingAnimations[index % floatingAnimations.length];
 
-            {testimonials.map(
-              (testimonial) => (
+              return (
+                <Box
+                  key={testimonial.id ?? index}
+                  sx={{
+                    position: 'absolute',
 
-                <TestimonialCard
-                  key={
-                    testimonial.id
-                  }
+                    top: position.top,
+                    left: position.left,
+                    width: position.width,
 
-                  testimonial={
-                    testimonial
-                  }
-                />
+                    zIndex: position.zIndex,
 
-              )
-            )}
+                    animation: `${animation} ${22 + (index % 3) * 4
+                      }s ease-in-out infinite`,
 
+                    animationDelay: `-${index * 5 + 3}s`,
+
+                    willChange: 'transform, opacity',
+
+                    '&:hover, &:focus-within': {
+                      animationPlayState: 'paused',
+                      zIndex: 20,
+                    },
+
+                    '@media (prefers-reduced-motion: reduce)': {
+                      animation: 'none',
+                      transform: 'none',
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <TestimonialCard testimonial={testimonial} />
+                </Box>
+              );
+            })}
           </Box>
 
+
+
+          {/* ==================================
+            MOBILE FLOATING CLIENT FEEDBACK
+          ================================== */}
+
+          <Box
+            sx={{
+              display: {
+                xs: 'block',
+                md: 'none',
+              },
+
+              position: 'relative',
+
+              mt: 5,
+
+
+              height: {
+                xs: 1350,
+                sm: 1450,
+              },
+
+
+
+              width: '100%',
+
+              isolation: 'isolate',
+
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '12%',
+                left: '5%',
+                width: '90%',
+                height: '75%',
+                border:
+                  '1px solid rgba(255,255,255,.07)',
+                borderRadius: '50%',
+                transform: 'rotate(-15deg)',
+                pointerEvents: 'none',
+              },
+            }}
+          >
+            {testimonials.slice(0, 4).map(
+              (testimonial, index) => {
+
+                const positions = [
+                  {
+                    top: '2%',
+                    left: '2%',
+                    rotate: '-4deg',
+                  },
+                  {
+                    top: '27%',
+                    left: '9%',
+                    rotate: '4deg',
+                  },
+                  {
+                    top: '52%',
+                    left: '3%',
+                    rotate: '-3deg',
+                  },
+                  {
+                    top: '77%',
+                    left: '8%',
+                    rotate: '3deg',
+                  },
+                ];
+
+
+                const position = positions[index];
+
+                const isActive =
+                  activeMobileCard === index;
+
+                return (
+                  <Box
+                    key={testimonial.id ?? index}
+                    tabIndex={0}
+                    onMouseEnter={() =>
+                      setActiveMobileCard(index)
+                    }
+                    onMouseLeave={() =>
+                      setActiveMobileCard(null)
+                    }
+                    onFocus={() =>
+                      setActiveMobileCard(index)
+                    }
+                    onBlur={() =>
+                      setActiveMobileCard(null)
+                    }
+                    onPointerDown={() =>
+                      setActiveMobileCard(index)
+                    }
+                    sx={{
+                      position: 'absolute',
+
+                      top: position.top,
+                      left: position.left,
+
+                      width: '88%',
+                      maxWidth: 360,
+
+                      zIndex: isActive
+                        ? 100
+                        : index + 1,
+
+                      transform: isActive
+                        ? 'rotate(0deg) scale(1.03)'
+                        : `rotate(${position.rotate})`,
+
+                      transformOrigin: 'center',
+
+                      transition:
+                        'transform .35s ease, box-shadow .35s ease',
+
+                      cursor: 'pointer',
+
+                      outline: 'none',
+
+                      '&:focus-visible': {
+                        outline:
+                          '2px solid rgba(114,246,255,.75)',
+                        outlineOffset: 4,
+                      },
+
+                      '&:hover': {
+                        boxShadow:
+                          '0 25px 70px rgba(0,0,0,.65)',
+                      },
+                    }}
+                  >
+                    <TestimonialCard
+                      testimonial={testimonial}
+                    />
+                  </Box>
+                );
+              }
+            )}
+          </Box>
+
+
         </Box>
+
 
       </Container>
 
