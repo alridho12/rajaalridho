@@ -374,16 +374,19 @@ const ProjectCard = ({ project, index }) => {
       <Box sx={{ mt: 3 }}>
         {/* STAGGERED TAGS */}
 
+
         <Stack
           component={motion.div}
           variants={tagsVariants}
-
-          direction="row"
           spacing={1}
-          flexWrap="wrap"
           useFlexGap
-          mb={2}
+          sx={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            mb: 2,
+          }}
         >
+
           {project.tags.map((tag) => (
             <Box
               component={motion.div}

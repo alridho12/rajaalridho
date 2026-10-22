@@ -825,6 +825,7 @@ const VisitorGlobeSection = () => {
           >
             <Box
               ref={containerRef}
+              data-cursor="grab"
               sx={{
                 width: '100%',
 

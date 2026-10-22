@@ -203,9 +203,12 @@ const ContactSection = () => {
 
         <Stack
           direction="row"
-          alignItems="center"
           spacing={2}
-          mb={4}
+          sx={{
+            alignItems: "center",
+            mb: 4
+
+          }}
         >
 
           <Typography
@@ -327,10 +330,10 @@ const ContactSection = () => {
 
             <Stack
               direction="row"
-              alignItems="center"
               spacing={1.5}
 
               sx={{
+                alignItems: "center",
                 mt: 5,
               }}
             >
@@ -410,68 +413,80 @@ const ContactSection = () => {
 
             <Stack spacing={3}>
 
+
               <TextField
                 fullWidth
                 variant="standard"
                 label={t('contact.form.name')}
+                slotProps={{
+                  inputLabel: {
+                    sx: {
+                      color: 'rgba(255,255,255,.45)',
+                      fontSize: 11,
+                      letterSpacing: 1.5,
 
-                InputLabelProps={{
-                  sx: {
-                    color:
-                      'rgba(255,255,255,.45)',
-
-                    fontSize: 11,
-
-                    letterSpacing: 1.5,
-                  },
-                }}
-
-                InputProps={{
-                  sx: {
-                    color: '#fff',
-
-                    '&:before': {
-                      borderColor:
-                        'rgba(255,255,255,.25)',
+                      '&.Mui-focused': {
+                        color: '#fff',
+                      },
                     },
+                  },
 
-                    '&:after': {
-                      borderColor:
-                        '#fff',
+                  input: {
+                    sx: {
+                      color: '#fff',
+
+                      '&:before': {
+                        borderColor:
+                          'rgba(255,255,255,.25)',
+                      },
+
+                      '&:hover:not(.Mui-disabled):before': {
+                        borderColor:
+                          'rgba(255,255,255,.5)',
+                      },
+
+                      '&:after': {
+                        borderColor: '#fff',
+                      },
                     },
                   },
                 }}
               />
 
-
               <TextField
                 fullWidth
                 variant="standard"
                 label={t('contact.form.email')}
+                slotProps={{
+                  inputLabel: {
+                    sx: {
+                      color: 'rgba(255,255,255,.45)',
+                      fontSize: 11,
+                      letterSpacing: 1.5,
 
-                InputLabelProps={{
-                  sx: {
-                    color:
-                      'rgba(255,255,255,.45)',
-
-                    fontSize: 11,
-
-                    letterSpacing: 1.5,
-                  },
-                }}
-
-                InputProps={{
-                  sx: {
-                    color: '#fff',
-
-                    '&:before': {
-                      borderColor:
-                        'rgba(255,255,255,.25)',
+                      '&.Mui-focused': {
+                        color: '#fff',
+                      },
                     },
+                  },
 
-                    '&:after': {
-                      borderColor:
-                        '#fff',
+                  input: {
+                    sx: {
+                      color: '#fff',
+
+                      '&:before': {
+                        borderColor:
+                          'rgba(255,255,255,.25)',
+                      },
+
+                      '&:hover:not(.Mui-disabled):before': {
+                        borderColor:
+                          'rgba(255,255,255,.5)',
+                      },
+
+                      '&:after': {
+                        borderColor: '#fff',
+                      },
                     },
                   },
                 }}
@@ -482,38 +497,43 @@ const ContactSection = () => {
                 fullWidth
                 multiline
                 minRows={4}
-
                 variant="standard"
-
                 label={t('contact.form.message')}
+                slotProps={{
+                  inputLabel: {
+                    sx: {
+                      color: 'rgba(255,255,255,.45)',
+                      fontSize: 11,
+                      letterSpacing: 1.5,
 
-                InputLabelProps={{
-                  sx: {
-                    color:
-                      'rgba(255,255,255,.45)',
-
-                    fontSize: 11,
-
-                    letterSpacing: 1.5,
-                  },
-                }}
-
-                InputProps={{
-                  sx: {
-                    color: '#fff',
-
-                    '&:before': {
-                      borderColor:
-                        'rgba(255,255,255,.25)',
+                      '&.Mui-focused': {
+                        color: '#fff',
+                      },
                     },
+                  },
 
-                    '&:after': {
-                      borderColor:
-                        '#fff',
+                  input: {
+                    sx: {
+                      color: '#fff',
+
+                      '&:before': {
+                        borderColor:
+                          'rgba(255,255,255,.25)',
+                      },
+
+                      '&:hover:not(.Mui-disabled):before': {
+                        borderColor:
+                          'rgba(255,255,255,.5)',
+                      },
+
+                      '&:after': {
+                        borderColor: '#fff',
+                      },
                     },
                   },
                 }}
               />
+
 
 
               <Button

@@ -268,9 +268,11 @@ const AboutInfoSection = () => {
           component={motion.div}
           {...reveal('up', 0.05)}
           direction="row"
-          alignItems="center"
           spacing={2}
-          mb={3}
+          sx={{
+            alignItems: 'center',
+            mb: 3,
+          }}
         >
           <Typography
             sx={{

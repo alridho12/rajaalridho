@@ -1220,18 +1220,22 @@ const CyberDodgeSection = () => {
         >
           {/* GAME HUD */}
 
+
           <Stack
-            direction={{
-              xs: 'column',
-              sm: 'row',
-            }}
-            alignItems={{
-              xs: 'flex-start',
-              sm: 'center',
-            }}
-            justifyContent="space-between"
             spacing={1.5}
             sx={{
+              flexDirection: {
+                xs: 'column',
+                sm: 'row',
+              },
+
+              alignItems: {
+                xs: 'flex-start',
+                sm: 'center',
+              },
+
+              justifyContent: 'space-between',
+
               px: 0.5,
               pb: 1.5,
             }}

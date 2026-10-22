@@ -285,6 +285,7 @@ const HeroArtwork = () => {
           damping: 12,
           mass: 1.2,
         }}
+        data-cursor="grab"
 
         // Menggunakan state visual bawaan Framer Motion untuk mengubah kursor
         whileHover={{ cursor: 'grab' }}
@@ -358,6 +359,7 @@ const HeroArtwork = () => {
           damping: 12,
           mass: 1.2,
         }}
+        data-cursor="grab"
 
         // Menggunakan internal state hover/tap bawaan framer motion untuk kursor
         whileHover={{ cursor: 'grab' }}
