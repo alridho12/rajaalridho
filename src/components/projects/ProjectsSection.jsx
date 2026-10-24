@@ -964,8 +964,8 @@ const ProjectsSection = () => {
 
 
   const scrollHeight = isMobile
-    ? 240 + total * 110
-    : 260 + total * 120;
+    ? 200 + total * 70
+    : 220 + total * 80;
 
 
   return (
